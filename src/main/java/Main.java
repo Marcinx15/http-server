@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.Map;
 
 public class Main {
   public static void main(String[] args) {
@@ -29,7 +31,21 @@ public class Main {
     }
 
     private static HttpResponse buildResponse(HttpRequest request) {
-        return new HttpResponse(request.path.equals("/") ? HttpStatusCode.OK : HttpStatusCode.NOT_FOUND);
+        String[] pathParts = request.path.substring(1).split("/");
+        if (pathParts.length == 0) {
+            return new HttpResponse(HttpStatusCode.OK, Collections.emptyMap(), null);
+        } else if (pathParts.length == 2 && pathParts[0].equals("echo")) {
+            return new HttpResponse(
+                HttpStatusCode.OK,
+                Map.of(
+                    "Content-Type", "text/plain",
+                    "Content-Length", String.valueOf(pathParts[1].length())
+                ),
+                pathParts[1]
+            );
+        } else {
+            return new HttpResponse(HttpStatusCode.NOT_FOUND, Collections.emptyMap(), null);
+        }
     }
 }
 
