@@ -32,7 +32,7 @@ public class Main {
 
     private static HttpResponse buildResponse(HttpRequest request) {
         String[] pathParts = request.path.substring(1).split("/");
-        if (pathParts.length == 1) {
+        if (request.path.equals("/")) {
             return new HttpResponse(HttpStatusCode.OK, Collections.emptyMap(), null);
         } else if (pathParts.length == 2 && pathParts[0].equals("echo")) {
             return new HttpResponse(
