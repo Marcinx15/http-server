@@ -9,8 +9,8 @@ public class HttpResponse {
 
     public HttpResponse(HttpStatusCode statusCode, Map<String, String> headers, String body) {
         this.statusCode = statusCode;
-        this.headers = headers;
         this.body = body;
+        this.headers = headers;
     }
 
     public byte[] toBytes() {
