@@ -5,24 +5,36 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class Main {
   public static void main(String[] args) {
-    ServerSocket serverSocket;
-    Socket clientSocket;
-
-     try {
-       serverSocket = new ServerSocket(4221);
-       serverSocket.setReuseAddress(true);
-       clientSocket = serverSocket.accept(); // Wait for connection from client.
-       System.out.println("accepted new connection");
-       HttpRequest request = readRequest(clientSocket.getInputStream());
-       HttpResponse response = buildResponse(request);
-       clientSocket.getOutputStream().write(response.toBytes());
+      ExecutorService executorService = Executors.newFixedThreadPool(64);
+      try (ServerSocket serverSocket = new ServerSocket(4221)) {
+          serverSocket.setReuseAddress(true);
+          while (true) {
+              Socket clientSocket = serverSocket.accept();
+              executorService.submit(() -> {
+                  try {
+                      handleSingleConnection(clientSocket);
+                  } catch (IOException e) {
+                      System.out.println("IOException: " + e.getMessage());
+                  }
+              });
+          }
      } catch (IOException e) {
-       System.out.println("IOException: " + e.getMessage());
+          System.out.println("IOException: " + e.getMessage());
      }
   }
+
+    private static void handleSingleConnection(Socket clientSocket) throws IOException {
+        System.out.println("accepted new connection");
+        HttpRequest request = readRequest(clientSocket.getInputStream());
+        HttpResponse response = buildResponse(request);
+        clientSocket.getOutputStream().write(response.toBytes());
+    }
 
     private static HttpRequest readRequest(InputStream inputStream) throws IOException {
         BufferedReader requestReader = new BufferedReader(new InputStreamReader(inputStream));
