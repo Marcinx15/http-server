@@ -93,23 +93,21 @@ public class Main {
     }
 
     private static HttpResponse filesResponse(String filesDirectory, String filename) throws IOException {
-        Path path = Paths.get(filesDirectory + filename);
+        Path path = Paths.get(filesDirectory, filename);
         if (!Files.exists(path)) {
             return new HttpResponse(HttpStatusCode.NOT_FOUND, Collections.emptyMap(), null);
         } else  {
-            try(Stream<String> lines = Files.lines(path)) {
-                String fileContent = lines.collect(Collectors.joining("\n"));
-                return new HttpResponse(
-                        HttpStatusCode.OK,
-                        Map.of(
-                                "Content-Type", "application/octet-stream",
-                                "Content-Length", String.valueOf(fileContent.length())
+            byte[] content = Files.readAllBytes(path);
+            return new HttpResponse(
+                    HttpStatusCode.OK,
+                    Map.of(
+                            "Content-Type", "application/octet-stream",
+                            "Content-Length", String.valueOf(content.length)
                         ),
-                        fileContent
+                    new String(content)
                 );
             }
         }
-    }
 
 }
 
