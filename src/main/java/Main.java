@@ -82,7 +82,7 @@ public class Main {
         } else if (request.path.equals("/user-agent")) {
             return userAgentResponse(request.headers.get("user-agent"));
         } else if (pathParts.length == 2 && pathParts[0].equals("echo")) {
-            return echoResponse(pathParts[1]);
+            return echoResponse(request, pathParts[1]);
         } else if (pathParts.length == 2 && pathParts[0].equals("files")) {
             return filesGetResponse(pathParts[1]);
         } else {
@@ -99,13 +99,15 @@ public class Main {
         }
     }
 
-    private static HttpResponse echoResponse(String echoValue) {
+    private static HttpResponse echoResponse(HttpRequest request, String echoValue) {
+        boolean compress = request.headers.get("accept-encoding").contains("gzip");
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "text/plain");
+        headers.put("Content-Length", String.valueOf(echoValue.length()));
+        if (compress) headers.put("Content-Encoding", "gzip");
         return new HttpResponse(
                 HttpStatusCode.OK,
-                Map.of(
-                        "Content-Type", "text/plain",
-                        "Content-Length", String.valueOf(echoValue.length())
-                ),
+                headers,
                 echoValue
         );
     }
@@ -147,5 +149,3 @@ public class Main {
     }
 
 }
-
-
