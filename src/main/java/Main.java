@@ -1,4 +1,3 @@
-import javax.swing.text.html.Option;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 public class Main {
     private static String fileDirectory;
@@ -100,17 +98,14 @@ public class Main {
     }
 
     private static HttpResponse echoResponse(HttpRequest request, String echoValue) {
-        String acceptEncodingHeader = request.headers.get("accept-encoding");
-        boolean compress = acceptEncodingHeader != null &&
-                Arrays.stream(acceptEncodingHeader.split(",")).map(String::trim).anyMatch("gzip"::equals);
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "text/plain");
-        headers.put("Content-Length", String.valueOf(echoValue.length()));
-        if (compress) headers.put("Content-Encoding", "gzip");
         return new HttpResponse(
                 HttpStatusCode.OK,
-                headers,
-                echoValue
+                Map.of(
+                        "Content-Type", "text/plain",
+                        "Content-Length", String.valueOf(echoValue.length())
+                ),
+                echoValue.getBytes(),
+                request.containsCompressHeader()
         );
     }
 
@@ -121,7 +116,7 @@ public class Main {
                         "Content-Type", "text/plain",
                         "Content-Length", String.valueOf(userAgentValue.length())
                 ),
-                userAgentValue
+                userAgentValue.getBytes()
         );
     }
 
@@ -137,7 +132,7 @@ public class Main {
                             "Content-Type", "application/octet-stream",
                             "Content-Length", String.valueOf(content.length)
                         ),
-                    new String(content)
+                    content
                 );
             }
     }
@@ -149,5 +144,7 @@ public class Main {
         }
         return new HttpResponse(HttpStatusCode.CREATED, Collections.emptyMap(), null);
     }
+
+
 
 }

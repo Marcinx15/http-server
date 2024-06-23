@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,6 +29,12 @@ public class HttpRequest {
                 headers,
                 !requestLines.getLast().isEmpty() ? requestLines.getLast() : null
         );
+    }
+
+    public boolean containsCompressHeader() {
+        String acceptEncodingHeader = headers.get("accept-encoding");
+        return acceptEncodingHeader != null &&
+                Arrays.stream(acceptEncodingHeader.split(",")).map(String::trim).anyMatch("gzip"::equals);
     }
 
 
