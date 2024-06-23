@@ -28,7 +28,6 @@ public class HttpRequest {
                 headers,
                 !requestLines.getLast().isEmpty() ? requestLines.getLast() : null
         );
-
     }
 
 
