@@ -101,7 +101,8 @@ public class Main {
 
     private static HttpResponse echoResponse(HttpRequest request, String echoValue) {
         String acceptEncodingHeader = request.headers.get("accept-encoding");
-        boolean compress = acceptEncodingHeader != null && acceptEncodingHeader.contains("gzip");
+        boolean compress = acceptEncodingHeader != null &&
+                Arrays.stream(acceptEncodingHeader.split(",")).map(String::trim).anyMatch("gzip"::equals);
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "text/plain");
         headers.put("Content-Length", String.valueOf(echoValue.length()));
