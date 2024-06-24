@@ -50,6 +50,7 @@ public class HttpResponse {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream)) {
             gzipOutputStream.write(body);
+            gzipOutputStream.finish();
             return outputStream.toByteArray();
         }
     }
