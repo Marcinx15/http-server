@@ -35,7 +35,7 @@ public class HttpResponse {
             headers.put("Content-Encoding", "gzip");
             bodyResponse = compressBody();
         }
-        headers.put("Content-Length", String.valueOf(bodyResponse.length));
+        if (body != null) headers.put("Content-Length", String.valueOf(bodyResponse.length));
 
         String statusLine = getStatusLine();
         String headersSection = headers.entrySet().stream()
