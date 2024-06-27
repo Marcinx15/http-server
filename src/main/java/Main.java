@@ -8,9 +8,11 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Main {
-    private static String fileDirectory;
 
+public class Main {
+  private static String fileDirectory;
+
+  @SuppressWarnings("InfiniteLoopStatement")
   public static void main(String[] args) {
       fileDirectory = (args.length >= 2 && "--directory".equals(args[0])) ? args[1] : "";
       ExecutorService executorService = Executors.newFixedThreadPool(64);
@@ -144,7 +146,4 @@ public class Main {
         }
         return new HttpResponse(HttpStatusCode.CREATED, Collections.emptyMap(), null);
     }
-
-
-
 }

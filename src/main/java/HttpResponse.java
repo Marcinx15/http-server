@@ -2,7 +2,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -59,4 +58,3 @@ public class HttpResponse {
         return HTTP_VERSION + " " + statusCode;
     }
 }
-

@@ -36,7 +36,5 @@ public class HttpRequest {
         return acceptEncodingHeader != null &&
                 Arrays.stream(acceptEncodingHeader.split(",")).map(String::trim).anyMatch("gzip"::equals);
     }
-
-
 }
 
